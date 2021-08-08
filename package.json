@@ -1,0 +1,24 @@
+{
+  "name": "wasabi-video-encode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozturkkl/wasabi-video-encode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ozturkkl/wasabi-video-encode/issues"
+  },
+  "homepage": "https://github.com/ozturkkl/wasabi-video-encode#readme",
+  "dependencies": {
+    "aws-sdk": "^2.963.0",
+    "dotenv": "^10.0.0"
+  }
+}
