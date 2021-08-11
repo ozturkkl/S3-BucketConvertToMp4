@@ -1,4 +1,4 @@
-# wasabi-video-encode
+# s3-bucket-convert-to-mp4
 This is a repo to convert non .mp4 videos to .mp4 in your S3 bucket in order to have html5 video previews. It is fully automated here is how it works...
 
 ## Usage
