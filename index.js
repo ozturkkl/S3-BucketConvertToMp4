@@ -19,6 +19,8 @@ const s3 = new AWS.S3({
 });
 
 let processing = false
+let videoInfo = null
+let failedVideos = []
 
 async function main() {
     processing = true
@@ -32,8 +34,13 @@ async function main() {
     const videosToEncode = getVideosToEncode(videos)
 
     console.log(`\nThere are ${videosToEncode.length} videos to encode.`)
+    if (failedVideos.length > 0){
+        console.log((failedVideos.length === 1) ? `\nThere is a failed video. Please make sure the video is in good shape!` : `\nThere are ${failedVideos.length} failed videos. Please make sure these videos are in good shape!`)
+        failedVideos.forEach(video => console.log("Failed: ", video))
+    }
+
     for (let i = 0; i < videosToEncode.length; i++) {
-        const videoInfo = path.parse(videosToEncode[i])
+        videoInfo = path.parse(videosToEncode[i])
         videoInfo.key = videosToEncode[i]
 
         console.log(`\n------------------- Starting Video #${i + 1} -------------------`)
@@ -45,10 +52,10 @@ async function main() {
     }
     processing = false
 }
-main().catch(e => console.error(e))
+main().catch(handleMainRejection)
 setInterval(() => {
     if (!processing)
-        main().catch(e => console.error(e))
+        main().catch(handleMainRejection)
 }, 1000 * 60 * 20); // Once every 20 mins
 
 async function getObjects() {
@@ -83,9 +90,9 @@ function filterVideos(objects, encoding) {
 }
 function getVideosToEncode(videos) {
     const mp4Videos = filterVideos(videos, "mp4")
-    const nonMp4Videos = videos.filter(item => !mp4Videos.includes(item))
+    const videosToEncode = videos.filter(item => !mp4Videos.includes(item)).filter(item => !failedVideos.includes(item))
 
-    return nonMp4Videos.filter(item => {
+    return videosToEncode.filter(item => {
         const vidPath = path.parse(item)
         return !mp4Videos.includes(`${vidPath.dir}/${vidPath.name}.mp4`)
     })
@@ -137,4 +144,11 @@ async function uploadVideo(vid) {
 function emptyTemp() {
     fs.rmdirSync('temp', { recursive: true, force: true })
     fs.mkdirSync('temp')
+    videoInfo = null
+}
+
+function handleMainRejection (e){
+    failedVideos.push(videoInfo.key)
+    console.error(e)
+    main().catch(handleMainRejection)
 }
