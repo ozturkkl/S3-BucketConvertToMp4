@@ -22,11 +22,11 @@ The code will find video files that are not .mp4 and create a .mp4 version for b
 | delete-original | **false**            | Whether if the original video file(.avi, .mkv, .mov, etc.) should be deleted from the bucket after successful conversion.                          |
 
 ### Example use: 
-```node
+```
 node index.js preset="Very Fast 576p25" delete-original=true
 ```
 or
-```node
+```
 npm start preset="Very Fast 576p25" delete-original=true
 ```
 
