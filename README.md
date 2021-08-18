@@ -20,7 +20,8 @@ The code will find video files that are not .mp4 and create a .mp4 version for b
 | --------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | preset          | **Very Fast 720p30** | Determines the preset for the encoding. A list of presets can be found [here](https://handbrake.fr/docs/en/latest/technical/official-presets.html) |
 | delete-original | **false**            | Whether if the original video file(.avi, .mkv, .mov, etc.) should be deleted from the bucket after successful conversion.                          |
-Example use: 
+
+### Example use: 
 ```node
 node index.js preset="Very Fast 576p25" delete-original=true
 ```
