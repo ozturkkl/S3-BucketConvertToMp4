@@ -1,4 +1,5 @@
 require('dotenv').config()
+
 const path = require('path')
 const fs = require('fs')
 const AWS = require('aws-sdk');
@@ -22,6 +23,12 @@ let processing = false
 let videoInfo = null
 let failedVideos = []
 
+const argv = process.argv.slice(2).reduce((val, arg) => {
+    arg = arg.split("=")
+    val[arg[0]] = arg[1]
+    return val
+}, {})
+
 async function main() {
     processing = true
     emptyTemp()
@@ -34,7 +41,7 @@ async function main() {
     const videosToEncode = getVideosToEncode(videos)
 
     console.log(`\nThere are ${videosToEncode.length} videos to encode.`)
-    if (failedVideos.length > 0){
+    if (failedVideos.length > 0) {
         console.log((failedVideos.length === 1) ? `\nThere is a failed video. Please make sure the video is in good shape!` : `\nThere are ${failedVideos.length} failed videos. Please make sure these videos are in good shape!`)
         failedVideos.forEach(video => console.log("Failed: ", video))
     }
@@ -47,6 +54,7 @@ async function main() {
         await downloadVideo(videoInfo)
         await encodeVideo(videoInfo)
         await uploadVideo(videoInfo)
+        if (argv["delete-original"] === 'true') await deleteVideo(videoInfo)
         console.log(`------------------- Done Video #${i + 1} -------------------`)
         emptyTemp()
     }
@@ -119,7 +127,7 @@ async function encodeVideo(vid) {
     const options = {
         input: 'temp/' + vid.base,
         output: 'temp/' + vid.name + '.mp4',
-        preset: "Very Fast 576p25"
+        preset: argv["preset"] || "Very Fast 720p30"
     }
     await hbjs.run(options)
 }
@@ -141,13 +149,27 @@ async function uploadVideo(vid) {
         });
     })
 }
+async function deleteVideo(vid) {
+    console.log("Deleting video: ", vid.key)
+
+    var params = {
+        Bucket: process.env.BUCKET,
+        Key: vid.key
+    };
+    await new Promise((res, rej) => {
+        s3.deleteObject(params, function (err, data) {
+            if (err) console.log(err, err.stack)
+            res()
+        });
+    })
+}
 function emptyTemp() {
     fs.rmdirSync('temp', { recursive: true, force: true })
     fs.mkdirSync('temp')
     videoInfo = null
 }
 
-function handleMainRejection (e){
+function handleMainRejection(e) {
     failedVideos.push(videoInfo.key)
     console.error(e)
     main().catch(handleMainRejection)
