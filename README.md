@@ -34,7 +34,7 @@ npm start preset="Very Fast 576p25" delete-original=true
 - Your machine has to have List Objects permission granted in S3 configuration.
 - Videos are encoded using handbrake.js, this process will require some cpu so it is advised that you put this on a seperate machine.
 - Once run, the code will check for new files every 20 mins and attempt to convert them.
-- The original files are not deleted after the process, there will be two files with the same name but different extension. Ex. myVideo.avi myVideo.mp4
+- By default, the original files are not deleted after the process, there will be two files with the same name but different extension. Ex. myVideo.avi myVideo.mp4. See options for deletion after successful conversion.
 
 ## Sample Console Output: 
 ```
