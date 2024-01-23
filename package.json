@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/ozturkkl/wasabi-video-encode#readme",
   "dependencies": {
-    "aws-sdk": "^2.963.0",
+    "aws-sdk": "^2.1542.0",
     "dotenv": "^10.0.0",
     "handbrake-js": "^5.0.2",
     "mime-types": "^2.1.32"
